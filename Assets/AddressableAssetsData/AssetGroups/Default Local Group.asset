@@ -21,14 +21,6 @@ MonoBehaviour:
     m_Address: Game1
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: 5d500bf9ad6a30345bdbf467e4c2d2f5
-    m_Address: Game2
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 1f755b765d29af94bb8c6af6c291dffa
-    m_Address: Game3
-    m_ReadOnly: 0
-    m_SerializedLabels: []
   - m_GUID: 426df996023e83a4e903d76f84360b23
     m_Address: Assets/MyImage
     m_ReadOnly: 0

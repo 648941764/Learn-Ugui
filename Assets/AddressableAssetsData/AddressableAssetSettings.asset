@@ -38,6 +38,7 @@ MonoBehaviour:
   m_GroupAssets:
   - {fileID: 11400000, guid: bb85a33c7f970ba44851c5fc81a4b865, type: 2}
   - {fileID: 11400000, guid: b46111f7dd2419b498a34178a2b7c62a, type: 2}
+  - {fileID: 11400000, guid: 031a02ca41e199d46b59a374a859ffef, type: 2}
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
     m_CleanupStreamingAssetsAfterBuilds: 1
@@ -58,7 +59,7 @@ MonoBehaviour:
       - m_Id: c6f30a2d8d3e15f49bb0d6b73d0dfc0a
         m_Value: ServerData/[BuildTarget]
       - m_Id: e0e0ffd0d4b7bdd46a7fe02a65113237
-        m_Value: http://localhost/[BuildTarget]
+        m_Value: https://test-addressable.oss-cn-beijing.aliyuncs.com/[BuildTarget]
     m_ProfileEntryNames:
     - m_Id: ef515d87056620e44848dc5c9cb3537b
       m_Name: BuildTarget

@@ -16,6 +16,9 @@ public class AddressablesTest : MonoBehaviour
     [SerializeField] private List<AssetReference> _assetReferences = new List<AssetReference>();
     [SerializeField] private List<Button> _buttons;
     [SerializeField] private Button _btnOpenPanel;
+    [SerializeField] private Slider _silder;
+    [SerializeField] private Text _silderText;
+    [SerializeField] private GameObject _loadScreen;
 
     private void Awake()
     {
@@ -35,16 +38,34 @@ public class AddressablesTest : MonoBehaviour
         for (int i = 0;  i < _buttons.Count; i++)
         {
             int seceneIndex = i;
-            _buttons[i].onClick.AddListener(() => LoadScene(seceneIndex));
+            _buttons[i].onClick.AddListener(() => LoadSceneAsync(seceneIndex));
         }
 
         _btnOpenPanel.onClick.AddListener(OnBtnOpenPanelClicked);
     }
 
-    private void LoadScene(int index)
+    private async void LoadSceneAsync(int index)
     {
+        _loadScreen.SetActive(true);
+        await Task.Delay(TimeSpan.FromSeconds(2));
         AsyncOperationHandle<SceneInstance> sceneHandle = Addressables.LoadSceneAsync(_assetReferences[index]/*.RuntimeKey.ToString()*/, LoadSceneMode.Additive);
-        sceneHandle.Completed += OnSceneLoaded; 
+
+        while (!sceneHandle.IsDone)
+        {
+            float progress = sceneHandle.PercentComplete;
+            UpdateSilder(progress);
+            await Task.Yield();
+        }
+
+        sceneHandle.Completed += OnSceneLoaded;
+        await sceneHandle.Task;
+    }
+
+    void UpdateSilder(float progress)
+    {
+        _silder.value = progress;
+        Debug.Log(_silder.value);
+        _silderText.text = $"{progress * 100}";
     }
 
     private void LoadAsset<T>() where T : BaseUI
@@ -70,6 +91,7 @@ public class AddressablesTest : MonoBehaviour
 
     private void OnSceneLoaded(AsyncOperationHandle<SceneInstance> handle)
     {
+        _loadScreen.SetActive(false);
         if (handle.Status == AsyncOperationStatus.Succeeded)
         {
             Debug.Log($"<color=green>场景加载成功</color>");
