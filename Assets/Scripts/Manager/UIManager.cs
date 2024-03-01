@@ -11,7 +11,7 @@ public class UIManager : MonoSingleton<UIManager>
     public const string DATA_PATH = "Assets/UIPanel/{0}.prefab";
     public readonly Vector3 PANEL_PATH = new Vector3(0f, -10000f, 0f);
 
-    private Dictionary<Type, BaseUI> panels  = new Dictionary<Type, BaseUI>();
+    private Dictionary<Type, BaseUI> _panels  = new Dictionary<Type, BaseUI>();
 
     private Transform panelParents;
 
@@ -46,41 +46,63 @@ public class UIManager : MonoSingleton<UIManager>
         T LoadedAsset = await LoadAsset<T>(typeof(T).Name);
         T panel = Instantiate(LoadedAsset, Vector3.zero, Quaternion.identity);
         panel.transform.SetParent(panelParents);
-        panels.Add(typeof(T), panel);
-        Debug.Log(panels[typeof(T)]);
+        _panels.Add(typeof(T), panel);
         return panel;
     }
 
-    public  async Task OpenPanel<T>() where T : BaseUI
+    public async Task OpenPanel<T>() where T : BaseUI
     {
-        bool needCreate = !panels.ContainsKey(typeof(T));
-        T panel = needCreate ? await CreatePanel<T>() : (T)panels[typeof(T)];
+        bool needCreate = !_panels.ContainsKey(typeof(T));
+        T panel = needCreate ? await CreatePanel<T>() : (T)_panels[typeof(T)];
         panel.Enable();
     }
 
     public void ClosePanel<T>() where T : BaseUI
     {
-        if (!panels.ContainsKey(typeof(T))) 
+        if (!_panels.ContainsKey(typeof(T))) 
         {
             Debug.Log("<color=red>对象没有被创建</color>");
         }
         else
         {
-            panels[typeof(T)].Disable();
+            _panels[typeof(T)].Disable();
             Debug.Log("关闭页面");
         }
     }
 
+    public T GetPanel<T>() where T: BaseUI
+    {
+        if (CheckIsOpen<T>())
+        {
+            return (T)_panels[typeof(T)];
+        }
+        return default(T);
+    }
+
     public void DestroyPaenl<T>() where T : BaseUI
     {
-        if (panels.ContainsKey(typeof(T)))
+        if (_panels.ContainsKey(typeof(T)))
         {
-            panels[typeof(T)].Destroy();
-            panels.Remove(typeof(T));
+            _panels[typeof(T)].Destroy();
+            _panels.Remove(typeof(T));
         }
         else
         {
             Debug.Log("<color=red>对象没有被创建</color>");
         }
+    }
+
+    private bool IsCreatPanel<T>() where T : BaseUI
+    {
+        return _panels.ContainsKey(typeof(T));
+    }
+
+    public bool CheckIsOpen<T>() where T : BaseUI
+    {
+        if (!IsCreatPanel<T>())
+        {
+            return false;
+        }
+        return _panels[typeof(T)].IsOpen;
     }
 }

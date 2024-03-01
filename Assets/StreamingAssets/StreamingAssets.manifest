@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 1095360674
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: ui.unity2d
+      Dependencies: {}

@@ -15,7 +15,7 @@ public class AddressablesTest : MonoBehaviour
 
     [SerializeField] private List<AssetReference> _assetReferences = new List<AssetReference>();
     [SerializeField] private List<Button> _buttons;
-    [SerializeField] private Button _btnOpenPanel;
+    [SerializeField] private Button _btnOpenPanel,_btnOpenCountPanel;
     [SerializeField] private Slider _silder;
     [SerializeField] private Text _silderText;
     [SerializeField] private GameObject _loadScreen;
@@ -23,14 +23,6 @@ public class AddressablesTest : MonoBehaviour
     private void Awake()
     {
         InitButtons();
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            LoadAsset<TestPanel>();
-        }
     }
 
     private void InitButtons()
@@ -42,6 +34,7 @@ public class AddressablesTest : MonoBehaviour
         }
 
         _btnOpenPanel.onClick.AddListener(OnBtnOpenPanelClicked);
+        _btnOpenCountPanel.onClick.AddListener(OnBtnOpenCountPanelClicked);
     }
 
     private async void LoadSceneAsync(int index)
@@ -68,12 +61,6 @@ public class AddressablesTest : MonoBehaviour
         _silderText.text = $"{progress * 100}";
     }
 
-    private void LoadAsset<T>() where T : BaseUI
-    {
-        AsyncOperationHandle<GameObject> objHandle = Addressables.LoadAssetAsync<GameObject>("Assets/UIPanel/TestPanel.prefab");
-        objHandle.Completed += OnAssetLoaded;
-    }
-
     private void OnAssetLoaded<T>(AsyncOperationHandle<T> objHandle)
     {
         if (objHandle.Status == AsyncOperationStatus.Succeeded)
@@ -92,6 +79,7 @@ public class AddressablesTest : MonoBehaviour
     private void OnSceneLoaded(AsyncOperationHandle<SceneInstance> handle)
     {
         _loadScreen.SetActive(false);
+
         if (handle.Status == AsyncOperationStatus.Succeeded)
         {
             Debug.Log($"<color=green>场景加载成功</color>");
@@ -103,5 +91,10 @@ public class AddressablesTest : MonoBehaviour
     public async void  OnBtnOpenPanelClicked()
     {
        await UIManager.Instance.OpenPanel<TestPanel>();
+    }
+
+    public async void OnBtnOpenCountPanelClicked()
+    {
+        await UIManager.Instance.OpenPanel<CountPanel>();
     }
 }

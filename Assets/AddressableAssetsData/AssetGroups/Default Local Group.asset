@@ -33,8 +33,8 @@ MonoBehaviour:
     m_Address: Assets/UIPanel/TestPanel.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: 0b374a72240e56d47894870194d58d99
-    m_Address: Assets/UIPanel
+  - m_GUID: 0a6cedc0acc3c8244aa0a1d078e270bb
+    m_Address: Assets/UIPanel/CountPanel.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0
