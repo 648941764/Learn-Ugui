@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public delegate void EventHandle(EventParam eventParm);
-public class EventManager : MonoSingleton<EventManager>
+public class EventManager : SingleTon<EventManager>
 {
     public event EventHandle EventHandle;
     public void Add(EventHandle eventHandle)

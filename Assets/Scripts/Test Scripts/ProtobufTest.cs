@@ -10,18 +10,19 @@ public class ProtobufTest : MonoBehaviour
 {
      private void Start()
     {
-        //Person person = new Person()
-        //{
-        //    Age = 12,
-        //    Name = "Tom"
-        //};
+        Person person = new Person()
+        {
+            Age = 12,
+            Name = "Tom"
+        };
 
-        //byte[] serializeData = Serialize(person);
-        //Debug.Log(serializeData.Length);
+        byte[] serializeData = Serialize(person);
+        File.WriteAllBytes(Path.Combine(Application.dataPath, "serialized_data.bin"), serializeData);
+        Debug.Log(serializeData.Length);
 
-        //Person deserializedPerson = Deserialize<Person>(serializeData);
-        //Debug.Log("Deserialized Person: " + deserializedPerson.Name + ", " + deserializedPerson.Age);
-
+        byte[] bytes = File.ReadAllBytes(Path.Combine(Application.dataPath, "serialized_data.bin"));
+        Person deserializedPerson = Deserialize<Person>(bytes);
+        Debug.Log(deserializedPerson.Name);
         LoadAssetBundle();
     }
 

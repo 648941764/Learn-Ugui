@@ -468,7 +468,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dd22b2fbcf0798499b02e2140d13359, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _uILayer: 10
+  _uILayer: 30
   _txtCount: {fileID: 1363105709430282991}
   _btnAddCount: {fileID: 1363105710221221958}
   _btnReduceCount: {fileID: 1363105710137110707}

@@ -90,7 +90,7 @@ public class AddressablesTest : MonoBehaviour
 
     public async void  OnBtnOpenPanelClicked()
     {
-       await UIManager.Instance.OpenPanel<TestPanel>();
+       await UIManager.Instance.OpenPanel<LogoInPanel>();
     }
 
     public async void OnBtnOpenCountPanelClicked()

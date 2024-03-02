@@ -37,6 +37,10 @@ MonoBehaviour:
     m_Address: Assets/UIPanel/CountPanel.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 0b374a72240e56d47894870194d58d99
+    m_Address: Assets/UIPanel
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 8b91d53739dddde4dbf2a4225d05c10b, type: 2}
   m_SchemaSet:
