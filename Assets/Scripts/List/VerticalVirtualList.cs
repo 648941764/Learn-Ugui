@@ -31,9 +31,6 @@ public sealed class VerticalVirtualList : MonoBehaviour
         set  
         {
             _itemDataNum = value;
-            //_verticalLayoutGroup.enabled = true;
-            //LayoutRebuilder.ForceRebuildLayoutImmediate(_rectTransform);
-            //_verticalLayoutGroup.enabled = false;
             ResetContentInfo();
             RenderAllListItem();
             _scrollRectNormalizedPosLast = 1.0f;
@@ -48,19 +45,11 @@ public sealed class VerticalVirtualList : MonoBehaviour
         _itemIndcies = new int[_items.Length];
         _itemCount = _items.Length;
         _verticalLayoutGroup = GetComponent<VerticalLayoutGroup>();
+        _verticalLayoutGroup.enabled = false;
         _scrollRect = transform.parent.GetComponentInParent<ScrollRect>();
         _viewport = transform.parent as RectTransform;
         _scrollRect.onValueChanged.AddListener(OnScrollRectValueChange);
-    }
-
-    private void Start()
-    {
-        for (int i = -1; ++i < _itemCount;)
-        {
-            //Debug.Log(_items[i].transform.position);
-        }
-        _itemDistance = _items[0].transform.position.y - _items[1].transform.position.y;
-        Debug.Log($"item distance: {_itemDistance}");
+        _itemDistance = _items[0].rectTransform.sizeDelta.y + _verticalLayoutGroup.spacing;
     }
 
     private void OnScrollRectValueChange(Vector2 value)
@@ -144,7 +133,7 @@ public sealed class VerticalVirtualList : MonoBehaviour
             _itemIndcies[i] = i;
         }
 
-        float height = (_items[1].rectTransform.sizeDelta.y + _verticalLayoutGroup.spacing) * _itemDataNum
+        float height = (_items[0].rectTransform.sizeDelta.y + _verticalLayoutGroup.spacing) * _itemDataNum
             - _verticalLayoutGroup.spacing
             + _verticalLayoutGroup.padding.bottom
             + _verticalLayoutGroup.padding.top; 
@@ -152,13 +141,14 @@ public sealed class VerticalVirtualList : MonoBehaviour
         size.y = height;
         _rectTransform.sizeDelta = size;
 
-        //排列位置
-        float posy = -_verticalLayoutGroup.padding.top;
-        for (int i = -1; ++i < _items.Length;)
+        // 排列位置
+        Vector3 localPos = _items[0].rectTransform.anchoredPosition;
+        localPos.y = -(_verticalLayoutGroup.padding.top + _items[0].rectTransform.sizeDelta.y * 0.5f);
+        _items[0].rectTransform.anchoredPosition = localPos;
+        for (int i = 0; ++i < _itemCount;)
         {
-            _items[i].transform.localPosition = new Vector3(transform.position.x, posy, transform.position.z);
-            Debug.Log(_items[i].transform.localPosition);
-            posy += _items[i].transform.localPosition.y - _verticalLayoutGroup.spacing;
+            localPos.y -= _itemDistance;
+            _items[i].rectTransform.anchoredPosition = localPos;
         }
     }
 }
