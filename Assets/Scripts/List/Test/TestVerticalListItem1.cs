@@ -11,12 +11,15 @@ public class TestVerticalListItem1 : MonoBehaviour
 
     public int num = 10;
 
+    Sprite[] ss;
+
     List<int> nums = new List<int>();
 
     private void Awake()
     {
         list.listRenderer += OnListRender;
         refreshListBtn.onClick.AddListener(RefreshList);
+        ss = Resources.LoadAll<Sprite>("GUI");
         //atlas = Resources.Load<Sprite>("GUI");
     }
 
@@ -34,12 +37,12 @@ public class TestVerticalListItem1 : MonoBehaviour
             nums.Add(i);
         }
         Debug.Log($"{nums.Count}");
-        list.ItemDataNum = nums.Count;
+        list.ItemDataNum = ss.Length;
     }
 
     private void OnListRender(int index, ListItem listItem)
     {
         TestListItem testItem = listItem as TestListItem;
-        testItem.SetText(nums[index].ToString(), $"这是{nums[index]}", sprites[index]);
+        testItem.SetText(ss[index].name, $"这是{index + 1}", sprites[index]);
     }
 }

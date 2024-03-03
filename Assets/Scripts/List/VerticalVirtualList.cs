@@ -45,15 +45,18 @@ public sealed class VerticalVirtualList : MonoBehaviour
         _itemIndcies = new int[_items.Length];
         _itemCount = _items.Length;
         _verticalLayoutGroup = GetComponent<VerticalLayoutGroup>();
+        _verticalLayoutGroup.enabled = false;
+        Vector2 anchoredPos = _items[0].rectTransform.anchoredPosition;
+        anchoredPos.x = _items[0].rectTransform.sizeDelta.x * 0.5f + _verticalLayoutGroup.padding.left - _verticalLayoutGroup.padding.right;
+        for (int i = -1; ++i < _itemCount;)
+        {
+            _items[i].rectTransform.anchorMin = _items[i].rectTransform.anchorMax = new Vector2(0.0f, 1.0f);
+            _items[0].rectTransform.anchoredPosition = anchoredPos;
+        }
         _scrollRect = transform.parent.GetComponentInParent<ScrollRect>();
         _viewport = transform.parent as RectTransform;
         _scrollRect.onValueChanged.AddListener(OnScrollRectValueChange);
         _itemDistance = _items[0].rectTransform.sizeDelta.y + _verticalLayoutGroup.spacing;
-    }
-
-    private void Start()
-    {
-        _verticalLayoutGroup.enabled = false;
     }
 
     private void OnScrollRectValueChange(Vector2 value)
@@ -137,12 +140,12 @@ public sealed class VerticalVirtualList : MonoBehaviour
             _itemIndcies[i] = i;
         }
 
-        float height = (_items[0].rectTransform.sizeDelta.y + _verticalLayoutGroup.spacing) * _itemDataNum
+        Vector2 size = _rectTransform.sizeDelta;
+        size.y = 
+            (_items[0].rectTransform.sizeDelta.y + _verticalLayoutGroup.spacing) * _itemDataNum
             - _verticalLayoutGroup.spacing
             + _verticalLayoutGroup.padding.bottom
-            + _verticalLayoutGroup.padding.top; 
-        Vector2 size = _rectTransform.sizeDelta;
-        size.y = height;
+            + _verticalLayoutGroup.padding.top;
         _rectTransform.sizeDelta = size;
 
         // ≈≈¡–Œª÷√
@@ -152,6 +155,7 @@ public sealed class VerticalVirtualList : MonoBehaviour
         for (int i = 0; ++i < _itemCount;)
         {
             localPos.y -= _itemDistance;
+            Debug.Log(localPos);
             _items[i].rectTransform.anchoredPosition = localPos;
         }
     }
