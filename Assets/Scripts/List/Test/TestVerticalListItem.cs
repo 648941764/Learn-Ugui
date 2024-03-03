@@ -41,6 +41,6 @@ public class TestVerticalListItem : MonoBehaviour
     private void OnListRender(int index, ListItem listItem)
     {
         TestListItem testItem = listItem as TestListItem;
-        testItem.SetText(nums[index].ToString(), $"这是{nums[index]}", sprites[index]);
+        //testItem.SetText(nums[index].ToString(), $"这是{nums[index]}", sprites[index]);
     }
 }

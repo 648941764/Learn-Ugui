@@ -10,7 +10,7 @@ public class TestVerticalListItem1 : MonoBehaviour
     [SerializeField] List<Sprite> sprites = new List<Sprite>();
 
     public int num = 10;
-
+    private int _chooseItemSprite;
     Sprite[] ss;
 
     List<int> nums = new List<int>();
@@ -43,6 +43,23 @@ public class TestVerticalListItem1 : MonoBehaviour
     private void OnListRender(int index, ListItem listItem)
     {
         TestListItem testItem = listItem as TestListItem;
-        testItem.SetText(ss[index].name, $"这是{index + 1}", sprites[index]);
+        testItem.SetText(ss[index].name, $"这是{index + 1}");
+        testItem.currentindex = index;
+        testItem.openImgAction += OnRefreshImg;
+        //更新图片的显示，该显示显示，不该显示就把那给关掉
+        if (!testItem.Ints.Contains(index))
+        {
+            testItem.image.sprite = null;
+        }
+        else
+        {
+            testItem.image.sprite = ss[index];
+        }
     }
+
+    public void OnRefreshImg(int index, TestListItem testListItem)
+    {
+        testListItem.image.sprite = ss[index];
+    }
+
 }

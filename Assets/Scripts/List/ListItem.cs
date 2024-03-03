@@ -13,4 +13,6 @@ public abstract class ListItem : MonoBehaviour
             return _rectTransform;
         }
     }
+
+    public int recordIndex;
 }

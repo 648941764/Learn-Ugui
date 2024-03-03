@@ -1,25 +1,43 @@
 using UnityEngine.UI;
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class TestListItem : ListItem
 {
     private Text _txtName;
-    private Text _txtdescribe;
-    private Image _image;
+    private Text _txtDescribe;
+    private Button _btnOpenSprite;
+    public Image image;
+    public int currentindex;
+
+    private List<int> ints = new List<int>();
+    public Action<int, TestListItem> openImgAction;
+
+    public List<int> Ints => ints;
+
 
     private void Awake()
     {
+        recordIndex = -1;
         _txtName = GetComponentInChildren<Text>();
         _txtName = transform.GetChild(0).GetComponent<Text>();
-        _txtdescribe = transform.GetChild(1).GetComponent<Text>();
-        _image = gameObject.GetComponent<Image>();
+        _txtDescribe = transform.GetChild(1).GetComponent<Text>();
+        image = gameObject.GetComponent<Image>();
+        _btnOpenSprite = transform.GetChild(2).GetComponent<Button>();
+        _btnOpenSprite.onClick.AddListener(OnBtnOpenSpriteClicked);
     }
 
-    public void SetText(string name, string describle, Sprite sprite)
+    public void SetText(string name, string describle)
     {
         _txtName.text = name;
-        _txtdescribe.text = describle;
-        _image.sprite = sprite;
+        _txtDescribe.text = describle;
+    }
+
+    public void OnBtnOpenSpriteClicked()
+    {
+        openImgAction?.Invoke(currentindex, this);
+        recordIndex = currentindex;
+        ints.Add(recordIndex);
     }
 }
