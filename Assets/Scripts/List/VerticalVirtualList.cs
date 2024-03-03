@@ -45,11 +45,15 @@ public sealed class VerticalVirtualList : MonoBehaviour
         _itemIndcies = new int[_items.Length];
         _itemCount = _items.Length;
         _verticalLayoutGroup = GetComponent<VerticalLayoutGroup>();
-        _verticalLayoutGroup.enabled = false;
         _scrollRect = transform.parent.GetComponentInParent<ScrollRect>();
         _viewport = transform.parent as RectTransform;
         _scrollRect.onValueChanged.AddListener(OnScrollRectValueChange);
         _itemDistance = _items[0].rectTransform.sizeDelta.y + _verticalLayoutGroup.spacing;
+    }
+
+    private void Start()
+    {
+        _verticalLayoutGroup.enabled = false;
     }
 
     private void OnScrollRectValueChange(Vector2 value)

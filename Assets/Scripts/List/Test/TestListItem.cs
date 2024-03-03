@@ -4,15 +4,22 @@ using System.Collections.Generic;
 
 public class TestListItem : ListItem
 {
-    private Text text;
+    private Text _txtName;
+    private Text _txtdescribe;
+    private Image _image;
 
     private void Awake()
     {
-        text = GetComponentInChildren<Text>();
+        _txtName = GetComponentInChildren<Text>();
+        _txtName = transform.GetChild(0).GetComponent<Text>();
+        _txtdescribe = transform.GetChild(1).GetComponent<Text>();
+        _image = gameObject.GetComponent<Image>();
     }
 
-    public void SetText(string content)
+    public void SetText(string name, string describle, Sprite sprite)
     {
-        text.text = content;
+        _txtName.text = name;
+        _txtdescribe.text = describle;
+        _image.sprite = sprite;
     }
 }

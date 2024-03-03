@@ -1,10 +1,9 @@
-using UnityEngine.UI;
-using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.U2D;
-using UnityEditor.U2D;
+using UnityEngine;
+using UnityEngine.UI;
 
-public class TestVerticalListItem : MonoBehaviour
+public class TestVerticalListItem1 : MonoBehaviour
 {
     [SerializeField] VerticalVirtualList list;
     [SerializeField] Button refreshListBtn;
