@@ -31,11 +31,10 @@ public sealed class VerticalVirtualList : MonoBehaviour
         set  
         {
             _itemDataNum = value;
-            _verticalLayoutGroup.enabled = true;
-            LayoutRebuilder.ForceRebuildLayoutImmediate(_rectTransform);
-            _verticalLayoutGroup.enabled = false;
+            //_verticalLayoutGroup.enabled = true;
+            //LayoutRebuilder.ForceRebuildLayoutImmediate(_rectTransform);
+            //_verticalLayoutGroup.enabled = false;
             ResetContentInfo();
-            ResetItemIndices();
             RenderAllListItem();
             _scrollRectNormalizedPosLast = 1.0f;
             _scrollRect.verticalNormalizedPosition = 1.0f;
@@ -58,7 +57,7 @@ public sealed class VerticalVirtualList : MonoBehaviour
     {
         for (int i = -1; ++i < _itemCount;)
         {
-            Debug.Log(_items[i].transform.position);
+            //Debug.Log(_items[i].transform.position);
         }
         _itemDistance = _items[0].transform.position.y - _items[1].transform.position.y;
         Debug.Log($"item distance: {_itemDistance}");
@@ -109,14 +108,6 @@ public sealed class VerticalVirtualList : MonoBehaviour
         _scrollRectNormalizedPosLast = _scrollRect.verticalNormalizedPosition;
     }
 
-    private void ResetItemIndices()
-    {
-        for (int i = -1; ++i < _itemCount;)
-        {
-            _itemIndcies[i] = i;
-        }
-    }
-
     private void RenderAllListItem()
     {
         for (int i = -1; ++i < _itemCount;)
@@ -126,7 +117,7 @@ public sealed class VerticalVirtualList : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// 刷新物品
     /// </summary>
     /// <param name="index"> ListItem的索引 </param>
     private void RenderListItem(int index)
@@ -148,6 +139,11 @@ public sealed class VerticalVirtualList : MonoBehaviour
     /// </summary>
     private void ResetContentInfo()
     {
+        for (int i = -1; ++i < _itemCount;)
+        {
+            _itemIndcies[i] = i;
+        }
+
         float height = (_items[1].rectTransform.sizeDelta.y + _verticalLayoutGroup.spacing) * _itemDataNum
             - _verticalLayoutGroup.spacing
             + _verticalLayoutGroup.padding.bottom
@@ -155,5 +151,14 @@ public sealed class VerticalVirtualList : MonoBehaviour
         Vector2 size = _rectTransform.sizeDelta;
         size.y = height;
         _rectTransform.sizeDelta = size;
+
+        //排列位置
+        float posy = -_verticalLayoutGroup.padding.top;
+        for (int i = -1; ++i < _items.Length;)
+        {
+            _items[i].transform.localPosition = new Vector3(transform.position.x, posy, transform.position.z);
+            Debug.Log(_items[i].transform.localPosition);
+            posy += _items[i].transform.localPosition.y - _verticalLayoutGroup.spacing;
+        }
     }
 }
