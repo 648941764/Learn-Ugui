@@ -18,7 +18,10 @@ public class AssetBundleTest : MonoBehaviour
         AssetBundleBuild build = new AssetBundleBuild();
         build.assetBundleName = "ui";
         build.assetBundleVariant = "unity2d";
-        build.assetNames = new string[] { "Assets/UIPanel/CountPanel.prefab" };
+        build.assetNames = new string[] {
+            "Assets/UIPanel/CountPanel.prefab",
+            //还可以添加更多的路径
+        };
         builds.Add(build);
 
 

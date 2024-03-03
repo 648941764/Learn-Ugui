@@ -42,7 +42,7 @@ public class AddressablesTest : MonoBehaviour
         _loadScreen.SetActive(true);
         await Task.Delay(TimeSpan.FromSeconds(2));
         AsyncOperationHandle<SceneInstance> sceneHandle = Addressables.LoadSceneAsync(_assetReferences[index]/*.RuntimeKey.ToString()*/, LoadSceneMode.Additive);
-
+        //AsyncOperationHandle<SceneInstance> sceneHandle = Addressables.LoadSceneAsync("Assets/Scenes/Game1.unity", LoadSceneMode.Additive);
         while (!sceneHandle.IsDone)
         {
             float progress = sceneHandle.PercentComplete;

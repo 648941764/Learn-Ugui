@@ -44,9 +44,9 @@ public class LogoInPanel : BaseUI
         _btnRegister.onClick.AddListener(OnBtnRegisterCliked);
         _btnCloseRegister.onClick.AddListener(OnBtnCloseRegister);
 
-        _logoInAccount.onEndEdit.AddListener(OnLogoInAccountEndEdit);
+        _logoInAccount.onValueChanged.AddListener(OnLogoInAccountEndEdit);
         _logoInPassword.onValueChanged.AddListener(OnLogoInPasswordEndit);
-        _registerAccount.onEndEdit.AddListener(OnRegisterAccountEndEdit);
+        _registerAccount.onValueChanged.AddListener(OnRegisterAccountEndEdit);
         _registerPassword.onValueChanged.AddListener(OnRegisterPasswordEndEdit);
 
         _btnEnter.interactable = false;
