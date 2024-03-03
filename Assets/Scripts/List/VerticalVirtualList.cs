@@ -34,7 +34,7 @@ public sealed class VerticalVirtualList : MonoBehaviour
             _verticalLayoutGroup.enabled = true;
             LayoutRebuilder.ForceRebuildLayoutImmediate(_rectTransform);
             _verticalLayoutGroup.enabled = false;
-            RecalculateContentHeight();
+            ResetContentInfo();
             ResetItemIndices();
             RenderAllListItem();
             _scrollRectNormalizedPosLast = 1.0f;
@@ -48,11 +48,20 @@ public sealed class VerticalVirtualList : MonoBehaviour
         _items = GetComponentsInChildren<ListItem>();
         _itemIndcies = new int[_items.Length];
         _itemCount = _items.Length;
-        _itemDistance = _items[0].transform.position.y - _items[1].transform.position.y;
         _verticalLayoutGroup = GetComponent<VerticalLayoutGroup>();
         _scrollRect = transform.parent.GetComponentInParent<ScrollRect>();
         _viewport = transform.parent as RectTransform;
         _scrollRect.onValueChanged.AddListener(OnScrollRectValueChange);
+    }
+
+    private void Start()
+    {
+        for (int i = -1; ++i < _itemCount;)
+        {
+            Debug.Log(_items[i].transform.position);
+        }
+        _itemDistance = _items[0].transform.position.y - _items[1].transform.position.y;
+        Debug.Log($"item distance: {_itemDistance}");
     }
 
     private void OnScrollRectValueChange(Vector2 value)
@@ -92,6 +101,7 @@ public sealed class VerticalVirtualList : MonoBehaviour
                     Vector2 currentPos = _items[i].rectTransform.anchoredPosition;
                     currentPos.y += (_itemDistance * _itemCount);
                     _items[i].rectTransform.anchoredPosition = currentPos;
+                    RenderListItem(i);
                 }
             }
         }
@@ -133,7 +143,10 @@ public sealed class VerticalVirtualList : MonoBehaviour
         }
     }
 
-    private void RecalculateContentHeight()
+    /// <summary>
+    /// 根据数据重新计算content高度，并且重置item的位置
+    /// </summary>
+    private void ResetContentInfo()
     {
         float height = (_items[1].rectTransform.sizeDelta.y + _verticalLayoutGroup.spacing) * _itemDataNum
             - _verticalLayoutGroup.spacing
