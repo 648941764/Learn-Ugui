@@ -8,6 +8,8 @@ public delegate void ListRenderer(int index, ListItem listItem);
 [RequireComponent(typeof(RectTransform), typeof(VerticalLayoutGroup))]
 public sealed class VerticalVirtualList : MonoBehaviour
 {
+    [SerializeField] private bool _isLoopList = false;
+
     private ListItem[] _items;
     private int[] _itemIndcies;
     private int _itemCount;
@@ -81,6 +83,10 @@ public sealed class VerticalVirtualList : MonoBehaviour
                 if (listItemCorners[0].y > viewportCorners[1].y)
                 {
                     _itemIndcies[i] += _itemCount;
+                    if (_isLoopList && _itemIndcies[i] >= _itemCount)
+                    {
+                        _itemIndcies[i] %= _itemCount;
+                    }
                     Vector2 currentPos = _items[i].rectTransform.anchoredPosition;
                     currentPos.y -= (_itemDistance * _itemCount);
                     _items[i].rectTransform.anchoredPosition = currentPos;
@@ -97,6 +103,10 @@ public sealed class VerticalVirtualList : MonoBehaviour
                 if (listItemCorners[1].y < viewportCorners[0].y)
                 {
                     _itemIndcies[i] -= _itemCount;
+                    if (_isLoopList && _itemIndcies[i] < 0)
+                    {
+                        _itemIndcies[i] += _itemCount;
+                    }
                     Vector2 currentPos = _items[i].rectTransform.anchoredPosition;
                     currentPos.y += (_itemDistance * _itemCount);
                     _items[i].rectTransform.anchoredPosition = currentPos;
@@ -106,6 +116,11 @@ public sealed class VerticalVirtualList : MonoBehaviour
         }
 
         _scrollRectNormalizedPosLast = _scrollRect.verticalNormalizedPosition;
+
+        if (_isLoopList)
+        {
+            
+        }
     }
 
     private void RenderAllListItem()
@@ -164,5 +179,10 @@ public sealed class VerticalVirtualList : MonoBehaviour
             Debug.Log(localPos);
             _items[i].rectTransform.anchoredPosition = localPos;
         }
+    }
+
+    private void UpdateContentPosInVirtualList()
+    {
+
     }
 }
