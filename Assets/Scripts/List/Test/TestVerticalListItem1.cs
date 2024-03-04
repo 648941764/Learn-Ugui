@@ -55,7 +55,6 @@ public class TestVerticalListItem1 : MonoBehaviour
         {
             testItem.image.sprite = ss[index];
         }
-
     }
 
     public void OnRefreshImg(int index, TestListItem testListItem)
@@ -66,10 +65,12 @@ public class TestVerticalListItem1 : MonoBehaviour
             if (i != index)
             {
                 list.Items[i].GetComponent<Image>().sprite = null;
+                list.Items[i].IsOpen = false;
                 testListItem.image.sprite = ss[index];
                 list.Items[i].recordIndex = -1;
             }
         }
+
     }
 
 }

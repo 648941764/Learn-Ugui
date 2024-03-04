@@ -15,4 +15,6 @@ public abstract class ListItem : MonoBehaviour
     }
 
     public int recordIndex;
+
+    public bool IsOpen;
 }

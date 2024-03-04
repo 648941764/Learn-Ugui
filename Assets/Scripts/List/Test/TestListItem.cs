@@ -38,5 +38,15 @@ public class TestListItem : ListItem
     {
         openImgAction?.Invoke(currentindex, this);
         recordIndex = currentindex;
+
+        if (IsOpen)
+        {
+            image.sprite = null;
+            IsOpen = false;
+        }
+        else
+        {
+            IsOpen = true;
+        }
     }
 }
