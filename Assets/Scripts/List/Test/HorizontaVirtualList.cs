@@ -3,21 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public delegate void ListRenderer(int index, ListItem listItem);
+public delegate void ListRefresh(int index, ListItem listItem);
 
 [RequireComponent(typeof(RectTransform), typeof(VerticalLayoutGroup))]
-public sealed class VerticalVirtualList : MonoBehaviour
+
+public class HorizontaVirtualList : MonoBehaviour
 {
     private ListItem[] _items;
     private int[] _itemIndcies;
     private int _itemCount;
     private float _itemDistance;
-    private VerticalLayoutGroup _verticalLayoutGroup;
+    private HorizontalLayoutGroup _horizontalLayoutGroup;
     private ScrollRect _scrollRect;
     private RectTransform _viewport;
     private RectTransform _rectTransform;
 
-    public event ListRenderer listRenderer;
+    public ListRefresh listRefresh;
+
     public ListItem[] Items => _items;
 
     private int _itemDataNum;
@@ -29,12 +31,12 @@ public sealed class VerticalVirtualList : MonoBehaviour
     public int ItemDataNum
     {
         get => _itemDataNum;
-        set  
+        set
         {
             _itemDataNum = value;
             ResetContentInfo();
             RenderAllListItem();
-            _scrollRectNormalizedPosLast = 1.0f;
+            _scrollRectNormalizedPosLast = 0.0f;
             _scrollRect.verticalNormalizedPosition = 1.0f;
         }
     }
@@ -45,12 +47,12 @@ public sealed class VerticalVirtualList : MonoBehaviour
         _items = GetComponentsInChildren<ListItem>();
         _itemIndcies = new int[_items.Length];
         _itemCount = _items.Length;
-        _verticalLayoutGroup = GetComponent<VerticalLayoutGroup>();
-        _verticalLayoutGroup.enabled = false;
+        _horizontalLayoutGroup = GetComponent<HorizontalLayoutGroup>();
+        _horizontalLayoutGroup.enabled = false;
 
         //设置锚点的位置和让物体中心对其
         Vector2 anchoredPos = _items[0].rectTransform.anchoredPosition;
-        anchoredPos.x = _items[0].rectTransform.sizeDelta.x * 0.5f + _verticalLayoutGroup.padding.left - _verticalLayoutGroup.padding.right;
+        anchoredPos.x = _items[0].rectTransform.sizeDelta.x * 0.5f + _horizontalLayoutGroup.padding.top - _horizontalLayoutGroup.padding.bottom;
         for (int i = -1; ++i < _itemCount;)
         {
             _items[i].rectTransform.anchorMin = _items[i].rectTransform.anchorMax = new Vector2(0.0f, 1.0f);
@@ -60,52 +62,52 @@ public sealed class VerticalVirtualList : MonoBehaviour
         _scrollRect = transform.parent.GetComponentInParent<ScrollRect>();
         _viewport = transform.parent as RectTransform;
         _scrollRect.onValueChanged.AddListener(OnScrollRectValueChange);
-        _itemDistance = _items[0].rectTransform.sizeDelta.y + _verticalLayoutGroup.spacing;
+        _itemDistance = _items[0].rectTransform.sizeDelta.x + _horizontalLayoutGroup.spacing;
     }
 
     private void OnScrollRectValueChange(Vector2 value)
     {
-        if (_scrollRectNormalizedPosLast == value.y)
+        if (_scrollRectNormalizedPosLast == value.x)
         {
             return;
         }
 
         _viewport.GetWorldCorners(viewportCorners);
 
-        if (_scrollRectNormalizedPosLast > value.y)
+        if (_scrollRectNormalizedPosLast < value.x)
         {
-            // 上滑检测超出顶部
+            // 左滑检测超出最左边
             for (int i = -1; ++i < _itemCount;)
             {
                 _items[i].rectTransform.GetWorldCorners(listItemCorners);
-                if (listItemCorners[0].y > viewportCorners[1].y)
+                if (listItemCorners[2].x < viewportCorners[1].x)
                 {
-                    _itemIndcies[i] += _itemCount;
+                    _itemIndcies[i] -= _itemCount;
                     Vector2 currentPos = _items[i].rectTransform.anchoredPosition;
-                    currentPos.y -= (_itemDistance * _itemCount);
+                    currentPos.x += (_itemDistance * _itemCount);//TODO
                     _items[i].rectTransform.anchoredPosition = currentPos;
                     RenderListItem(i);
                 }
             }
         }
-        else if (_scrollRectNormalizedPosLast < value.y)
+        else if (_scrollRectNormalizedPosLast > value.x)
         {
-            // 下滑检测超出顶部 
+            // 右边滑检测超出最右边 
             for (int i = -1; ++i < _itemCount;)
             {
                 _items[i].rectTransform.GetWorldCorners(listItemCorners);
-                if (listItemCorners[1].y < viewportCorners[0].y)
+                if (listItemCorners[1].x > viewportCorners[2].x)
                 {
-                    _itemIndcies[i] -= _itemCount;
+                    _itemIndcies[i] += _itemCount;
                     Vector2 currentPos = _items[i].rectTransform.anchoredPosition;
-                    currentPos.y += (_itemDistance * _itemCount);
+                    currentPos.x -= (_itemDistance * _itemCount);//TODO
                     _items[i].rectTransform.anchoredPosition = currentPos;
                     RenderListItem(i);
                 }
             }
         }
 
-        _scrollRectNormalizedPosLast = _scrollRect.verticalNormalizedPosition;
+        _scrollRectNormalizedPosLast = _scrollRect.horizontalNormalizedPosition;
     }
 
     private void RenderAllListItem()
@@ -116,10 +118,6 @@ public sealed class VerticalVirtualList : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 刷新物品
-    /// </summary>
-    /// <param name="index"> ListItem的索引 </param>
     private void RenderListItem(int index)
     {
         int dataIndex = _itemIndcies[index];
@@ -130,15 +128,10 @@ public sealed class VerticalVirtualList : MonoBehaviour
         else
         {
             _items[index].gameObject.SetActive(true);
-            listRenderer(_itemIndcies[index], _items[index]);            
+            listRefresh(_itemIndcies[index], _items[index]);
         }
     }
 
-
-
-    /// <summary>
-    /// 根据数据重新计算content高度，并且重置item的位置
-    /// </summary>
     private void ResetContentInfo()
     {
         for (int i = -1; ++i < _itemCount;)
@@ -147,20 +140,20 @@ public sealed class VerticalVirtualList : MonoBehaviour
         }
 
         Vector2 size = _rectTransform.sizeDelta;
-        size.y = 
-            (_items[0].rectTransform.sizeDelta.y + _verticalLayoutGroup.spacing) * _itemDataNum
-            - _verticalLayoutGroup.spacing
-            + _verticalLayoutGroup.padding.bottom
-            + _verticalLayoutGroup.padding.top;
+        size.x =
+            (_items[0].rectTransform.sizeDelta.y + _horizontalLayoutGroup.spacing) * _itemDataNum
+            - _horizontalLayoutGroup.spacing
+            + _horizontalLayoutGroup.padding.right
+            + _horizontalLayoutGroup.padding.left;
         _rectTransform.sizeDelta = size;
 
         // 排列位置
         Vector3 localPos = _items[0].rectTransform.anchoredPosition;
-        localPos.y = -(_verticalLayoutGroup.padding.top + _items[0].rectTransform.sizeDelta.y * 0.5f);
+        localPos.x = (_horizontalLayoutGroup.padding.left + _items[0].rectTransform.sizeDelta.x * 0.5f);//TODO
         _items[0].rectTransform.anchoredPosition = localPos;
         for (int i = 0; ++i < _itemCount;)
         {
-            localPos.y -= _itemDistance;
+            localPos.x += _itemDistance;//TODO
             Debug.Log(localPos);
             _items[i].rectTransform.anchoredPosition = localPos;
         }

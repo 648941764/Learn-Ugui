@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TestVerticalListItem1 : MonoBehaviour
+public class TestVerticalListItemForHorizontal : MonoBehaviour
 {
-    [SerializeField] VerticalVirtualList list;
+    [SerializeField] HorizontaVirtualList list;
     [SerializeField] Button refreshListBtn;
     [SerializeField] List<Sprite> sprites = new List<Sprite>();
 
@@ -17,7 +17,7 @@ public class TestVerticalListItem1 : MonoBehaviour
 
     private void Awake()
     {
-        list.listRenderer += OnListRender;
+        list.listRefresh += OnListRender;
         refreshListBtn.onClick.AddListener(RefreshList);
         ss = Resources.LoadAll<Sprite>("GUI");
         //atlas = Resources.Load<Sprite>("GUI");
@@ -42,19 +42,19 @@ public class TestVerticalListItem1 : MonoBehaviour
 
     private void OnListRender(int index, ListItem listItem)
     {
-        TestListItem testItem = listItem as TestListItem;
-        testItem.SetText(ss[index].name, $"这是{index + 1}");
+        HorizontalListItem testItem = listItem as HorizontalListItem;
+        testItem.SetText(ss[index].name);
         testItem.currentindex = index;
-        testItem.openImgAction += OnRefreshImg;
+        //testItem.openImgAction += OnRefreshImg;
         //更新图片的显示，该显示显示，不该显示就把那给关掉
-        if (testItem.recordIndex != index)
-        {
-            testItem.image.sprite = null;
-        }
-        else
-        {
-            testItem.image.sprite = ss[index];
-        }
+        //if (testItem.recordIndex != index)
+        //{
+        //    testItem.image.sprite = null;
+        //}
+        //else
+        //{
+        //    testItem.image.sprite = ss[index];
+        //}
 
     }
 
@@ -71,5 +71,4 @@ public class TestVerticalListItem1 : MonoBehaviour
             }
         }
     }
-
 }

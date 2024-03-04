@@ -11,10 +11,10 @@ public class TestListItem : ListItem
     public Image image;
     public int currentindex;
 
-    private List<int> ints = new List<int>();
+    //private List<int> ints = new List<int>();
     public Action<int, TestListItem> openImgAction;
 
-    public List<int> Ints => ints;
+    //public List<int> Ints => ints;
 
 
     private void Awake()
@@ -38,6 +38,5 @@ public class TestListItem : ListItem
     {
         openImgAction?.Invoke(currentindex, this);
         recordIndex = currentindex;
-        ints.Add(recordIndex);
     }
 }
