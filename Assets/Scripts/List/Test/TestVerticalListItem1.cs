@@ -37,7 +37,7 @@ public class TestVerticalListItem1 : MonoBehaviour
             nums.Add(i);
         }
         Debug.Log($"{nums.Count}");
-        list.ItemDataNum = ss.Length;
+        list.ItemDataNum = 11; //ss.Length;
     }
 
     private void OnListRender(int index, ListItem listItem)

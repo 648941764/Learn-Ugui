@@ -43,6 +43,7 @@ public class TestListItem : ListItem
         {
             image.sprite = null;
             IsOpen = false;
+            recordIndex = -1;
         }
         else
         {

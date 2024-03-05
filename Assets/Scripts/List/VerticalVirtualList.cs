@@ -119,8 +119,22 @@ public sealed class VerticalVirtualList : MonoBehaviour
 
         if (_isLoopList)
         {
-            
+            if(_scrollRect.verticalNormalizedPosition >= 1f)
+            {
+                _scrollRect.verticalNormalizedPosition = 0;
+                _scrollRectNormalizedPosLast = _scrollRect.verticalNormalizedPosition;
+                ResetListPosition();
+                RenderAllListItem();
+            }
+            else if(_scrollRect.verticalNormalizedPosition < 0)
+            {
+                _scrollRect.verticalNormalizedPosition = 1f;
+                _scrollRectNormalizedPosLast = _scrollRect.verticalNormalizedPosition;
+                ResetListPosition();
+                RenderAllListItem();
+            }
         }
+
     }
 
     private void RenderAllListItem()
@@ -170,19 +184,31 @@ public sealed class VerticalVirtualList : MonoBehaviour
         _rectTransform.sizeDelta = size;
 
         // ÅÅÁÐÎ»ÖÃ
+        UpdateContentInChild();
+    }
+
+    private void UpdateContentInChild()
+    {
         Vector3 localPos = _items[0].rectTransform.anchoredPosition;
         localPos.y = -(_verticalLayoutGroup.padding.top + _items[0].rectTransform.sizeDelta.y * 0.5f);
         _items[0].rectTransform.anchoredPosition = localPos;
         for (int i = 0; ++i < _itemCount;)
         {
             localPos.y -= _itemDistance;
-            Debug.Log(localPos);
             _items[i].rectTransform.anchoredPosition = localPos;
         }
     }
 
-    private void UpdateContentPosInVirtualList()
+    private void ResetListPosition()
     {
-
+        Vector3 localPos = viewportCorners[1];
+        float posY = localPos.y;
+        posY = (posY - _verticalLayoutGroup.padding.top - _items[0].rectTransform.sizeDelta.y * 0.5f);
+        for (int i = 0; i < _itemCount; i++)
+        {
+            _items[i].transform.position = new Vector3(_items[i].transform.position.x, posY, _items[i].transform.position.z);
+            posY -= _itemDistance;
+        }
     }
+
 }
