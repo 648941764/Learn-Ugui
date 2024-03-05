@@ -17,7 +17,7 @@ public class TestVerticalListItem : MonoBehaviour
     private void Awake()
     {
         list.listRenderer += OnListRender;
-        refreshListBtn.onClick.AddListener(RefreshList);
+        //refreshListBtn.onClick.AddListener(RefreshList);
         //atlas = Resources.Load<Sprite>("GUI");
     }
 

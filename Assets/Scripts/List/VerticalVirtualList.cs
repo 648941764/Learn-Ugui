@@ -52,17 +52,19 @@ public sealed class VerticalVirtualList : MonoBehaviour
 
         //设置锚点的位置和让物体中心对其
         Vector2 anchoredPos = _items[0].rectTransform.anchoredPosition;
-        anchoredPos.x = _items[0].rectTransform.sizeDelta.x * 0.5f + _verticalLayoutGroup.padding.left - _verticalLayoutGroup.padding.right;
+        anchoredPos.x = _items[0].rectTransform.sizeDelta.x * _items[0].rectTransform.pivot.x + 
+            _verticalLayoutGroup.padding.left - _verticalLayoutGroup.padding.right;
         for (int i = -1; ++i < _itemCount;)
         {
             _items[i].rectTransform.anchorMin = _items[i].rectTransform.anchorMax = new Vector2(0.0f, 1.0f);
-            _items[0].rectTransform.anchoredPosition = anchoredPos;
+            _items[i].rectTransform.anchoredPosition = anchoredPos;
         }
 
         _scrollRect = transform.parent.GetComponentInParent<ScrollRect>();
         _viewport = transform.parent as RectTransform;
         _scrollRect.onValueChanged.AddListener(OnScrollRectValueChange);
         _itemDistance = _items[0].rectTransform.sizeDelta.y + _verticalLayoutGroup.spacing;
+        UpdateChildToTop();
     }
 
     private void OnScrollRectValueChange(Vector2 value)
@@ -83,9 +85,9 @@ public sealed class VerticalVirtualList : MonoBehaviour
                 if (listItemCorners[0].y > viewportCorners[1].y)
                 {
                     _itemIndcies[i] += _itemCount;
-                    if (_isLoopList && _itemIndcies[i] >= _itemCount)
+                    if (_isLoopList && _itemIndcies[i] >= _itemDataNum)
                     {
-                        _itemIndcies[i] %= _itemCount;
+                        _itemIndcies[i] %= _itemDataNum;
                     }
                     Vector2 currentPos = _items[i].rectTransform.anchoredPosition;
                     currentPos.y -= (_itemDistance * _itemCount);
@@ -105,7 +107,7 @@ public sealed class VerticalVirtualList : MonoBehaviour
                     _itemIndcies[i] -= _itemCount;
                     if (_isLoopList && _itemIndcies[i] < 0)
                     {
-                        _itemIndcies[i] += _itemCount;
+                        _itemIndcies[i] += _itemDataNum;
                     }
                     Vector2 currentPos = _items[i].rectTransform.anchoredPosition;
                     currentPos.y += (_itemDistance * _itemCount);
@@ -119,18 +121,18 @@ public sealed class VerticalVirtualList : MonoBehaviour
 
         if (_isLoopList)
         {
-            if(_scrollRect.verticalNormalizedPosition >= 1f)
+            if(_scrollRect.verticalNormalizedPosition > 1.0f)
             {
-                _scrollRect.verticalNormalizedPosition = 0;
+                _scrollRect.verticalNormalizedPosition = 0.0f;
                 _scrollRectNormalizedPosLast = _scrollRect.verticalNormalizedPosition;
-                ResetListPosition();
+                UpdateChildToBottom();
                 RenderAllListItem();
             }
-            else if(_scrollRect.verticalNormalizedPosition < 0)
+            else if(_scrollRect.verticalNormalizedPosition < 0.0f)
             {
-                _scrollRect.verticalNormalizedPosition = 1f;
+                _scrollRect.verticalNormalizedPosition = 1.0f;
                 _scrollRectNormalizedPosLast = _scrollRect.verticalNormalizedPosition;
-                ResetListPosition();
+                UpdateChildToTop();
                 RenderAllListItem();
             }
         }
@@ -163,8 +165,6 @@ public sealed class VerticalVirtualList : MonoBehaviour
         }
     }
 
-
-
     /// <summary>
     /// 根据数据重新计算content高度，并且重置item的位置
     /// </summary>
@@ -184,17 +184,30 @@ public sealed class VerticalVirtualList : MonoBehaviour
         _rectTransform.sizeDelta = size;
 
         // 排列位置
-        UpdateContentInChild();
+        UpdateChildToTop();
     }
 
-    private void UpdateContentInChild()
+    private void UpdateChildToTop()
     {
         Vector3 localPos = _items[0].rectTransform.anchoredPosition;
-        localPos.y = -(_verticalLayoutGroup.padding.top + _items[0].rectTransform.sizeDelta.y * 0.5f);
+        localPos.y = -(_verticalLayoutGroup.padding.top + _items[0].rectTransform.sizeDelta.y * _items[0].rectTransform.pivot.y);
         _items[0].rectTransform.anchoredPosition = localPos;
         for (int i = 0; ++i < _itemCount;)
         {
             localPos.y -= _itemDistance;
+            _items[i].rectTransform.anchoredPosition = localPos;
+        }
+    }
+
+    private void UpdateChildToBottom()
+    {
+        Vector3 localPos = _items[_itemCount - 1].rectTransform.anchoredPosition;
+        localPos.y = -(_rectTransform.sizeDelta.y - _verticalLayoutGroup.padding.bottom - 
+            _items[_itemCount - 1].rectTransform.sizeDelta.y * (1.0f - _items[_itemCount - 1].rectTransform.pivot.y));
+        _items[_itemCount - 1].rectTransform.anchoredPosition = localPos;
+        for (int i = _itemCount - 1; --i >= 0;)
+        {
+            localPos.y += _itemDistance;
             _items[i].rectTransform.anchoredPosition = localPos;
         }
     }
