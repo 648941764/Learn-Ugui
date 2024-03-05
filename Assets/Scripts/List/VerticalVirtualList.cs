@@ -121,17 +121,26 @@ public sealed class VerticalVirtualList : MonoBehaviour
 
         if (_isLoopList)
         {
+
             if(_scrollRect.verticalNormalizedPosition > 1.0f)
             {
+                //_scrollRect.onValueChanged.RemoveAllListeners();//移除事件
+                _scrollRect.enabled = false;
                 _scrollRect.verticalNormalizedPosition = 0.0f;
                 _scrollRectNormalizedPosLast = _scrollRect.verticalNormalizedPosition;
+                //_scrollRect.onValueChanged.AddListener(OnScrollRectValueChange);//再次添加事件
+                _scrollRect.enabled = true;
                 UpdateChildToBottom();
                 RenderAllListItem();
             }
             else if(_scrollRect.verticalNormalizedPosition < 0.0f)
             {
+                //_scrollRect.onValueChanged.RemoveAllListeners();//移除事件
+                _scrollRect.enabled = false;
                 _scrollRect.verticalNormalizedPosition = 1.0f;
                 _scrollRectNormalizedPosLast = _scrollRect.verticalNormalizedPosition;
+                // _scrollRect.onValueChanged.AddListener(OnScrollRectValueChange);//再次添加事件
+                _scrollRect.enabled = true;
                 UpdateChildToTop();
                 RenderAllListItem();
             }
